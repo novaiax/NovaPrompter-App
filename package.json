@@ -1,0 +1,73 @@
+{
+  "name": "novaprompter",
+  "productName": "NovaPrompter",
+  "version": "0.2.3",
+  "description": "Studio de lecture et téléprompteur Windows avec suivi vocal hors ligne.",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "speech:prepare": "node scripts/prepare-speech.cjs",
+    "test": "node --test tests/unit.test.mjs",
+    "test:desktop": "node --test tests/desktop.test.cjs",
+    "dist:win": "npm run speech:prepare && electron-builder --win nsis --x64 --publish never"
+  },
+  "author": "NovaiaWeb",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "45.3.3",
+    "electron-builder": "26.18.0",
+    "playwright-core": "1.65.1"
+  },
+  "dependencies": {
+    "koffi": "3.3.8",
+    "obs-websocket-js": "^5.0.6"
+  },
+  "build": {
+    "appId": "fr.novaia.novaprompter",
+    "productName": "NovaPrompter",
+    "npmRebuild": false,
+    "files": [
+      "main.js",
+      "preload.js",
+      "desktop/**/*",
+      "windows/editor/**/*",
+      "windows/prompter/**/*",
+      "windows/shared/**/*",
+      "!windows/shared/app.{png,ico}",
+      "package.json",
+      "LICENSE"
+    ],
+    "asarUnpack": [
+      "**/*.node"
+    ],
+    "extraResources": [
+      {
+        "from": "build/speech",
+        "to": "speech"
+      },
+      {
+        "from": "windows/shared/novaiaweb-icon.ico",
+        "to": "novaiaweb-icon.ico"
+      }
+    ],
+    "win": {
+      "icon": "windows/shared/novaiaweb-icon.ico",
+      "target": "nsis",
+      "artifactName": "NovaPrompter-Installation.exe",
+      "signExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "NovaPrompter",
+      "installerIcon": "windows/shared/novaiaweb-icon.ico",
+      "uninstallerIcon": "windows/shared/novaiaweb-icon.ico",
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false
+    }
+  }
+}

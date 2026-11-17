@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; object-src 'none'; base-uri 'none'">
+  <title>Prompteur · NovaPrompter by novaiaweb</title>
+  <link rel="stylesheet" href="../shared/base.css">
+  <link rel="stylesheet" href="../shared/reader.css">
+  <link rel="stylesheet" href="./prompter.css">
+  <script type="module" src="./prompter.js"></script>
+</head>
+<body>
+  <header class="reader-titlebar">
+    <div class="reader-brand">
+      <img src="../shared/novaiaweb-icon.png" width="20" height="20" alt="">
+      <div class="app-wordmark"><strong>NovaPrompter</strong><span class="brand-credit">by novaiaweb</span></div>
+    </div>
+    <div class="grab" data-icon="grip" aria-hidden="true"></div>
+    <div class="window-actions">
+      <button id="btn-pin" type="button" title="Garder au premier plan" aria-label="Garder au premier plan" aria-pressed="true" data-icon="pin"></button>
+      <button id="btn-min" type="button" title="Minimiser" aria-label="Minimiser" data-icon="minus"></button>
+      <button id="btn-max" type="button" title="Agrandir" aria-label="Agrandir" data-icon="maximize"></button>
+      <button id="btn-close" type="button" title="Fermer" aria-label="Fermer" data-icon="close"></button>
+    </div>
+  </header>
+  <main id="stage" class="reading-viewport" aria-label="Texte du prompteur"></main>
+  <footer class="reader-footer">
+    <div class="reader-transport">
+      <button id="btn-play" type="button" title="Démarrer ou mettre en pause (Espace)" aria-label="Démarrer la lecture" data-icon="play"></button>
+      <button id="btn-reset" type="button" title="Revenir au début (R)" aria-label="Revenir au début" data-icon="reset"></button>
+    </div>
+    <span class="reader-indicator"><i></i><span id="reader-mode">Voix</span><span class="reader-status" id="reader-status">En pause</span></span>
+    <span class="reader-progress"><span id="reader-percent">0 %</span><span class="reader-track"><span id="reader-fill"></span></span></span>
+    <button id="btn-fullscreen" type="button" title="Plein écran (F11)" aria-label="Plein écran" data-icon="fullscreen"></button>
+  </footer>
+  <button id="resize-grip" type="button" title="Glisser pour redimensionner" aria-label="Redimensionner la fenêtre avec les flèches"></button>
+</body>
+</html>

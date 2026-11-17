@@ -1,0 +1,100 @@
+body {
+  display: grid;
+  grid-template-rows: 38px minmax(0, 1fr) 43px;
+  background: #10131d;
+  overflow: hidden;
+  user-select: none;
+  border: 1px solid #34394c;
+}
+.reader-titlebar {
+  display: grid;
+  grid-template-columns: 1fr 36px 1fr;
+  align-items: center;
+  gap: 5px;
+  background: #181b28;
+  border-bottom: 1px solid #2d3245;
+  -webkit-app-region: drag;
+}
+.reader-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 10px;
+  color: #e3e5f1;
+  font-size: 11px;
+  letter-spacing: .015em;
+}
+.reader-brand img { width: 20px; height: 20px; }
+.grab { color: #737b95; }
+.window-actions {
+  justify-self: end;
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+  -webkit-app-region: no-drag;
+}
+:where(.window-actions, .reader-footer) button {
+  display: grid;
+  place-content: center;
+  width: 32px;
+  height: 30px;
+  background: transparent;
+  color: #bdc4d8;
+  border: 0;
+  border-radius: 7px;
+}
+:where(.window-actions, .reader-footer) button:hover { background: #2a3145; color: white; }
+.window-actions button { height: 100%; border-radius: 0; }
+.window-actions button:last-child:hover { background: #a62f45; }
+.window-actions button[aria-pressed=true] { color: #c6baff; }
+:where(.window-actions,.reader-footer) button .icon { height: 15px; width: 15px; }
+.reader-footer {
+  display: flex;
+  align-items: center;
+  padding: 0 17px 0 8px;
+  gap: 9px;
+  background: #171b29;
+  border-top: 1px solid #2d3245;
+  font-size: 11px;
+}
+.reader-transport { display: flex; gap: 3px; }
+.reader-transport #btn-play { background: #b5a8ff; color: #251b47; }
+.reader-transport #btn-play:hover { background: #d1c7ff; }
+.reader-indicator { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.reader-indicator i { width: 6px; height: 6px; background: #8993ac; border-radius: 50%; }
+body[data-phase=playing] .reader-indicator i { background: #80dfb7; box-shadow: 0 0 9px #80dfb77d; }
+body.voice-waiting .reader-indicator i { background: #efc791; box-shadow: none; }
+.reader-status { color: #a6b0c9; }
+.reader-progress { display: flex; align-items: center; gap: 8px; margin-left: auto; color: #c1c9df; font-variant-numeric: tabular-nums; }
+.reader-track { height: 3px; width: clamp(35px, 16vw, 100px); background: #353c52; border-radius: 3px; display: block; }
+.reader-track span { display: block; height: 100%; width: 0; background: #b5a8ff; border-radius: inherit; }
+#resize-grip {
+  position: fixed;
+  right: 1px;
+  bottom: 1px;
+  z-index: 4;
+  width: 17px;
+  height: 17px;
+  padding: 0;
+  border: 0;
+  border-radius: 3px;
+  cursor: nwse-resize;
+  touch-action: none;
+  color: #8291ad;
+  background: repeating-linear-gradient(135deg, transparent 0 3px, currentColor 3px 4px) bottom right / 10px 10px no-repeat;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+}
+#resize-grip:hover, #resize-grip:focus-visible { color: #d1c4ff; background-color: #342c50; }
+body.fullscreen { border: 0; }
+body.fullscreen #resize-grip, body.maximized #resize-grip { display: none; }
+@media (max-width: 465px) {
+  .reader-titlebar { grid-template-columns: minmax(0, 1fr) auto; gap: 4px; }
+  .reader-brand { gap: 6px; padding-left: 7px; }
+  .reader-brand .app-wordmark { gap: 5px; }
+  .reader-brand .brand-credit { font-size: 9px; }
+  .grab { display: none; }
+}
+@media (max-width: 425px) {
+  body:not(.voice-waiting) .reader-status, .reader-track { display: none; }
+  .reader-footer { gap: 5px; }
+}

@@ -1,0 +1,76 @@
+.reading-viewport {
+  position: relative;
+  overflow: hidden;
+  background: var(--reader-bg, #111420);
+  color: var(--reader-fg, #f4f3ff);
+  isolation: isolate;
+  user-select: none;
+}
+.reading-mask {
+  position: absolute;
+  inset: 0;
+  mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 78%, transparent 100%);
+}
+.reading-copy {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: var(--read-width, 86%);
+  font: var(--read-weight, 500) var(--read-size, 42px)/var(--read-line, 1.5) var(--read-family, Lexend, sans-serif);
+  letter-spacing: var(--read-spacing, 0px);
+  text-align: var(--read-align, left);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  transform-origin: center top;
+  transform: translate3d(-50%, var(--read-y, 0), 0) scale(var(--flip-x, 1), var(--flip-y, 1));
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(.2,.64,.3,1);
+  will-change: transform;
+}
+.reading-viewport:not(.is-voice) .reading-copy { transition-timing-function: linear; }
+.reading-word { cursor: pointer; transition: color 140ms ease, opacity 140ms ease; }
+.reading-word:hover { text-decoration: underline; text-underline-offset: .16em; }
+.is-voice .reading-word.past { opacity: .32; }
+.is-voice .reading-word.current { color: #c9bcff; }
+.is-voice.light-reader .reading-word.current { color: #4d2f9b; }
+.reading-cue {
+  display: inline-block;
+  padding: 0 .34em;
+  border-radius: .25em;
+  font-weight: 650;
+  letter-spacing: .02em;
+}
+.reader-guide {
+  display: none;
+  position: absolute;
+  top: var(--read-focus, 32%);
+  left: 0;
+  right: 0;
+  z-index: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  height: 0;
+  pointer-events: none;
+}
+.reader-guide span { background: #ad98ff; height: 2px; width: 11px; box-shadow: 0 0 10px #a58eff8c; }
+.reader-guide span:first-child { border-radius: 0 2px 2px 0; }
+.reader-guide span:last-child { border-radius: 2px 0 0 2px; }
+.show-guide .reader-guide { display: flex; }
+.reader-empty, .reader-countdown {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.reader-empty { color: inherit; opacity: .65; font-size: 13px; }
+.reader-countdown {
+  color: #d7ccff;
+  background: #11131dcc;
+  font: 650 clamp(35px, 13vh, 78px)/1 Inter, sans-serif;
+  backdrop-filter: blur(4px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reading-copy, .reading-word { transition-duration: 0ms !important; }
+}

@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self' https: http://127.0.0.1:* http://localhost:*; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>NovaPrompter by novaiaweb</title>
+  <link rel="stylesheet" href="../shared/base.css">
+  <link rel="stylesheet" href="../shared/reader.css">
+  <link rel="stylesheet" href="./editor.css">
+  <script type="module" src="./editor.js"></script>
+</head>
+<body>
+  <header class="app-titlebar">
+    <img src="../shared/novaiaweb-icon.png" width="25" height="25" alt="">
+    <div class="app-wordmark"><strong>NovaPrompter</strong><span class="brand-credit">by novaiaweb</span></div>
+  </header>
+
+  <div class="workspace">
+    <aside class="library" aria-label="Bibliothèque">
+      <div class="library-head">
+        <h2>Bibliothèque</h2>
+        <button id="new-script" class="icon-button sidebar-plus" type="button" data-icon="plus" aria-label="Nouveau script" title="Nouveau script · Ctrl+N"></button>
+      </div>
+      <label class="search"><span data-icon="search"></span><input id="search-scripts" type="search" placeholder="Rechercher…" aria-label="Rechercher un script"></label>
+      <div class="library-label"><span>Mes scripts</span><span id="script-count"></span></div>
+      <ul id="script-list" class="script-list"></ul>
+      <p id="no-results" class="no-results" hidden>Aucun script trouvé.</p>
+      <div class="library-footer">
+        <button id="import-script" class="nav-button" type="button"><span data-icon="import"></span>Importer des scripts</button>
+        <button id="open-settings" class="nav-button" type="button"><span data-icon="settings"></span>Réglages</button>
+      </div>
+    </aside>
+
+    <main class="studio">
+      <header class="studio-head">
+        <div>
+          <h1>Studio de lecture</h1>
+          <p>Préparez votre texte et répétez à votre rythme.</p>
+        </div>
+        <div class="studio-actions">
+          <button id="open-shortcuts" class="icon-button shortcut-button" type="button" data-icon="keyboard" aria-label="Raccourcis clavier" title="Raccourcis clavier"></button>
+          <button id="open-reader" class="button primary open-reader" type="button"><span data-icon="external"></span><span id="open-reader-label">Ouvrir le prompteur</span></button>
+        </div>
+      </header>
+
+      <div class="studio-grid">
+        <section class="panel manuscript" aria-label="Éditeur de script">
+          <div class="panel-head manuscript-head">
+            <div class="panel-heading"><span class="panel-icon" data-icon="file"></span><h2>Éditeur</h2></div>
+            <span class="save-state" id="save-state" role="status"><span data-icon="check"></span><span id="save-label">Enregistré</span></span>
+          </div>
+          <div class="paper">
+            <input id="script-title" class="script-title" type="text" maxlength="160" placeholder="Script sans titre" aria-label="Titre du script" autocomplete="off" spellcheck="false">
+            <div class="editor-toolbar">
+              <button id="open-clean" class="button quiet" type="button"><span data-icon="sparkles"></span>Nettoyer</button>
+              <details class="dropdown" id="cue-menu">
+                <summary class="button quiet"><span data-icon="bookmark"></span>Repères<span class="small-icon" data-icon="chevron"></span></summary>
+                <div class="menu-popover" id="cue-menu-items"></div>
+              </details>
+              <details class="dropdown more-menu" id="script-menu">
+                <summary class="icon-button" aria-label="Actions du script" title="Actions du script" data-icon="more"></summary>
+                <div class="menu-popover align-end">
+                  <button id="start-at-cursor" type="button"><span data-icon="play"></span>Positionner à partir du curseur</button>
+                  <button id="duplicate-script" type="button"><span data-icon="plus"></span>Dupliquer</button>
+                  <button id="export-script" type="button"><span data-icon="export"></span>Exporter en texte</button>
+                  <button id="ask-delete" class="danger-text" type="button"><span data-icon="trash"></span>Supprimer</button>
+                </div>
+              </details>
+            </div>
+            <textarea id="script-body" aria-label="Texte du script" rows="4" maxlength="250000" spellcheck="true" placeholder="Écrivez ou collez votre texte ici…"></textarea>
+          </div>
+          <div class="document-meta">
+            <span id="word-count">0 mot</span><span class="meta-dot"></span><span id="read-time">0 min</span>
+          </div>
+        </section>
+
+        <aside class="inspector" aria-label="Aperçu et réglages de la lecture">
+          <section class="panel preview-panel" aria-labelledby="preview-title">
+            <div class="panel-head">
+              <div class="panel-heading"><span class="panel-icon" data-icon="window"></span><h2 id="preview-title">Aperçu</h2></div>
+              <div class="preview-actions">
+                <div class="font-stepper" role="group" aria-label="Taille du texte">
+                  <button id="font-smaller" type="button" aria-label="Réduire la taille du texte" title="Réduire la taille du texte">A−</button>
+                  <output id="quick-font-size" data-value="fontSize"></output>
+                  <button id="font-larger" type="button" aria-label="Augmenter la taille du texte" title="Augmenter la taille du texte">A+</button>
+                </div>
+                <button id="display-settings" class="icon-button" type="button" data-icon="settings" title="Réglages d’affichage" aria-label="Réglages d’affichage"></button>
+              </div>
+            </div>
+            <div class="preview-wrap">
+              <div id="preview" class="reading-viewport" aria-label="Position dans le texte"></div>
+            </div>
+            <div class="progress-row">
+              <label for="progress">Progression</label>
+              <output id="progress-label" for="progress">0 %</output>
+              <input id="progress" class="progress" type="range" min="0" max="1000" value="0" aria-label="Position de lecture" disabled>
+            </div>
+          </section>
+
+          <section class="panel controls-panel" aria-labelledby="mode-title">
+            <div class="panel-head">
+              <div class="panel-heading"><span class="panel-icon" data-icon="wave"></span><h2 id="mode-title">Défilement</h2></div>
+            </div>
+            <div class="control-inner">
+              <div class="segmented" role="group" aria-label="Mode de défilement">
+                <button id="mode-voice" type="button" data-mode="voice" aria-pressed="true"><span data-icon="mic"></span>Voix</button>
+                <button id="mode-auto" type="button" data-mode="auto" aria-pressed="false"><span data-icon="timer"></span>Auto</button>
+              </div>
+              <div id="voice-controls" class="mode-controls">
+                <div class="field-heading"><label for="mic-device">Microphone</label><button id="refresh-mics" type="button" class="subtle" data-icon="refresh" title="Détecter les microphones" aria-label="Détecter les microphones"></button></div>
+                <div class="mic-row">
+                  <select id="mic-device" aria-label="Microphone"><option value="">Microphone système</option></select>
+                  <button id="test-mic" class="button secondary" type="button">Tester</button>
+                </div>
+                <div class="meter-row">
+                  <div id="mic-meter" class="mic-meter" aria-hidden="true"></div>
+                  <span id="mic-db" class="meter-value" aria-hidden="true">— dB</span>
+                </div>
+                <p id="voice-status" class="mode-note" role="status">Microphone en veille</p>
+                <button id="mic-privacy" type="button" class="text-button" hidden>Ouvrir les réglages Windows</button>
+                <p id="transcript" class="transcript" title="Derniers mots reconnus" hidden></p>
+              </div>
+              <div id="auto-controls" class="mode-controls" hidden>
+                <div class="field-heading"><label for="pace">Vitesse</label><output data-value="pace"></output></div>
+                <input id="pace" data-setting="pace" type="range" min="65" max="320" step="1" value="150">
+                <p class="mode-note">Le texte avance à vitesse constante.</p>
+              </div>
+            </div>
+          </section>
+        </aside>
+      </div>
+
+      <footer class="transport panel" aria-label="Commandes de lecture">
+        <div class="transport-actions">
+          <button id="play" class="button primary play-button" type="button"><span id="play-icon" data-icon="play"></span><span id="play-label">Démarrer</span></button>
+          <button id="reset-position" class="button secondary reset-button" type="button" title="Revenir au début · R" aria-label="Revenir au début"><span data-icon="reset"></span><span>Début</span></button>
+        </div>
+        <div class="transport-status"><i id="transport-light"></i><span id="transport-message" aria-live="polite">Prêt à lire</span></div>
+        <span class="key-hint"><kbd>Espace</kbd> Lecture / pause</span>
+      </footer>
+    </main>
+  </div>
+
+  <dialog id="clean-dialog" class="dialog clean-dialog" aria-labelledby="clean-title">
+    <div class="dialog-header">
+      <div class="panel-heading"><span class="panel-icon" data-icon="sparkles"></span><h2 id="clean-title">Nettoyer le script</h2></div>
+      <button class="icon-button" type="button" data-icon="close" data-close aria-label="Fermer"></button>
+    </div>
+    <div class="clean-content">
+      <p class="dialog-note">Vérifiez le résultat avant de remplacer le texte.</p>
+      <div class="clean-options">
+        <label><input type="checkbox" id="clean-time" checked> Horodatages</label>
+        <label><input type="checkbox" id="clean-format" checked> Mise en forme</label>
+        <label><input type="checkbox" id="clean-space" checked> Espaces superflus</label>
+      </div>
+      <div class="compare-grid">
+        <label>Original<textarea id="clean-before" readonly rows="11"></textarea></label>
+        <label>Après nettoyage<textarea id="clean-after" readonly rows="11"></textarea></label>
+      </div>
+    </div>
+    <div class="dialog-footer">
+      <p id="clean-delta" class="dialog-note" role="status"></p>
+      <button class="button secondary" type="button" data-close>Annuler</button>
+      <button class="button primary" id="apply-clean" type="button">Appliquer</button>
+    </div>
+  </dialog>
+
+  <dialog id="settings-dialog" class="dialog settings-dialog" aria-labelledby="settings-title">
+    <div class="dialog-header">
+      <div class="panel-heading"><span class="panel-icon" data-icon="settings"></span><h2 id="settings-title">Réglages</h2></div>
+      <button class="icon-button" type="button" data-icon="close" data-close aria-label="Fermer"></button>
+    </div>
+    <div class="settings-tabs" role="tablist" aria-label="Catégories de réglages">
+      <button id="tab-display" role="tab" type="button" data-tab="display" aria-selected="true" aria-controls="settings-display">Affichage</button>
+      <button id="tab-playback" role="tab" type="button" data-tab="playback" aria-selected="false" aria-controls="settings-playback" tabindex="-1">Lecture</button>
+      <button id="tab-cues" role="tab" type="button" data-tab="cues" aria-selected="false" aria-controls="settings-cues" tabindex="-1">Repères</button>
+      <button id="tab-integrations" role="tab" type="button" data-tab="integrations" aria-selected="false" aria-controls="settings-integrations" tabindex="-1">Intégrations</button>
+    </div>
+    <div class="settings-body">
+      <section id="settings-display" role="tabpanel" aria-labelledby="tab-display">
+        <div class="setting-grid">
+          <label class="field">Thème du prompteur
+            <select data-setting="theme" id="reader-theme">
+              <option value="dark">Nuit</option><option value="light">Papier</option><option value="cream">Ivoire</option>
+              <option value="amber">Ambre</option><option value="green">Forêt</option><option value="blue">Encre</option><option value="custom">Personnalisé</option>
+            </select>
+          </label>
+          <label class="field">Police de lecture
+            <select data-setting="fontFamily" id="reader-font">
+              <option>Lexend</option><option>Inter</option><option>Segoe UI</option><option>Arial</option><option>Georgia</option><option>Consolas</option>
+            </select>
+          </label>
+          <div id="custom-colors" class="custom-colors" hidden>
+            <label>Texte <input data-setting="colorFg" type="color" value="#f4f3ff"></label>
+            <label>Fond <input data-setting="colorBg" type="color" value="#111420"></label>
+          </div>
+          <label class="field"><span class="field-heading">Taille du texte<output data-value="fontSize"></output></span><input data-setting="fontSize" type="range" min="18" max="120"></label>
+          <label class="field"><span class="field-heading">Largeur du texte<output data-value="lineWidth"></output></span><input data-setting="lineWidth" type="range" min="42" max="94"></label>
+          <label class="field"><span class="field-heading">Interligne<output data-value="lineHeight"></output></span><input data-setting="lineHeight" type="range" min="1.15" max="2.2" step=".05"></label>
+          <label class="field"><span class="field-heading">Position du repère<output data-value="focusOffset"></output></span><input data-setting="focusOffset" type="range" min="14" max="68"></label>
+          <label class="field"><span class="field-heading">Graisse du texte<output data-value="fontWeight"></output></span><input data-setting="fontWeight" type="range" min="300" max="900" step="100"></label>
+          <label class="field"><span class="field-heading">Espacement des lettres<output data-value="letterSpacing"></output></span><input data-setting="letterSpacing" type="range" min="-2" max="8"></label>
+          <label class="field"><span class="field-heading">Opacité de la fenêtre<output data-value="opacity"></output></span><input data-setting="opacity" type="range" min=".5" max="1" step=".05"></label>
+        </div>
+        <div class="toggle-grid">
+          <label><input type="checkbox" data-setting="alwaysTop"> Toujours au premier plan</label>
+          <label><input type="checkbox" data-setting="showGuide"> Repère de lecture</label>
+          <label><input type="checkbox" data-setting="alignLeft"> Aligné à gauche</label>
+          <label><input type="checkbox" data-setting="mirrorH"> Miroir horizontal</label>
+          <label><input type="checkbox" data-setting="mirrorV"> Miroir vertical</label>
+        </div>
+      </section>
+      <section id="settings-playback" role="tabpanel" aria-labelledby="tab-playback" hidden>
+        <div class="setting-grid">
+          <label class="field">Compte à rebours
+            <select data-setting="countdown" data-number>
+              <option value="0">Désactivé</option><option value="3">3 secondes</option><option value="5">5 secondes</option>
+            </select>
+          </label>
+          <label class="field"><span class="field-heading">Anticipation en mode Voix<output data-value="lookahead"></output></span><input data-setting="lookahead" type="range" min="0" max="12"></label>
+        </div>
+        <div class="toggle-grid">
+          <label><input type="checkbox" data-setting="noiseSuppression"> Réduction du bruit</label>
+          <label><input type="checkbox" data-setting="autoGain"> Niveau automatique</label>
+        </div>
+        <p class="dialog-note">La reconnaissance vocale française est intégrée. Le traitement du son se fait sur cet ordinateur.</p>
+      </section>
+      <section id="settings-cues" role="tabpanel" aria-labelledby="tab-cues" hidden>
+        <p class="dialog-note">Insérez des repères depuis l’éditeur. Une durée supérieure à zéro déclenche une pause en mode Auto.</p>
+        <div id="cue-list" class="cue-list"></div>
+        <button type="button" class="button secondary" id="add-cue"><span data-icon="plus"></span>Nouveau repère</button>
+      </section>
+      <section id="settings-integrations" role="tabpanel" aria-labelledby="tab-integrations" hidden>
+        <div class="integration-card">
+          <h3>Synchronisation des scripts</h3>
+          <p id="cloud-status" class="dialog-note" role="status"></p>
+          <label class="field">Adresse du serveur<input id="cloud-server" type="url" placeholder="https://…" spellcheck="false"></label>
+          <div id="cloud-login" class="setting-grid">
+            <label class="field">Adresse e-mail<input id="cloud-email" type="email" autocomplete="username"></label>
+            <label class="field">Mot de passe<input id="cloud-password" type="password" autocomplete="current-password"></label>
+          </div>
+          <div class="inline-actions" id="cloud-auth-actions">
+            <button class="button secondary" type="button" id="cloud-signin">Se connecter</button>
+            <button class="button quiet" type="button" id="cloud-signup">Créer un compte</button>
+          </div>
+          <div class="inline-actions" id="cloud-sync-actions" hidden>
+            <button class="button secondary" type="button" id="cloud-sync">Synchroniser</button>
+            <button class="button quiet" type="button" id="cloud-signout">Se déconnecter</button>
+          </div>
+          <label id="cloud-autosync-wrap" class="check-row" hidden><input type="checkbox" id="cloud-autosync"> Synchroniser après modification</label>
+        </div>
+        <div class="integration-card">
+          <h3>OBS Studio</h3>
+          <p id="obs-status" class="dialog-note" role="status">Non connecté</p>
+          <div class="setting-grid">
+            <label class="field">Adresse WebSocket<input id="obs-address" type="text" data-setting="obsHost" spellcheck="false"></label>
+            <label class="field">Mot de passe<input id="obs-password" type="password" autocomplete="off"></label>
+          </div>
+          <div class="inline-actions">
+            <button id="connect-obs" type="button" class="button secondary">Connecter OBS</button>
+            <select id="obs-scene" aria-label="Scène OBS" hidden></select>
+            <button id="switch-scene" type="button" class="button quiet" hidden>Afficher la scène</button>
+          </div>
+        </div>
+        <div class="integration-card">
+          <h3>Sauvegarde locale</h3>
+          <p class="dialog-note">Exportez vos scripts et vos repères pour les réimporter plus tard.</p>
+          <button id="export-library" class="button secondary" type="button"><span data-icon="export"></span>Exporter la bibliothèque</button>
+        </div>
+      </section>
+    </div>
+    <div class="dialog-footer">
+      <p class="dialog-note">Réglages enregistrés automatiquement</p>
+      <button type="button" class="button primary" data-close>Terminé</button>
+    </div>
+  </dialog>
+
+  <dialog id="shortcuts-dialog" class="dialog compact-dialog" aria-labelledby="shortcuts-title">
+    <div class="dialog-header">
+      <div class="panel-heading"><span class="panel-icon" data-icon="keyboard"></span><h2 id="shortcuts-title">Raccourcis clavier</h2></div>
+      <button class="icon-button" type="button" data-icon="close" data-close aria-label="Fermer"></button>
+    </div>
+    <div class="shortcut-list">
+      <div><span>Nouveau script</span><span><kbd>Ctrl</kbd> <kbd>N</kbd></span></div>
+      <div><span>Importer des scripts</span><span><kbd>Ctrl</kbd> <kbd>O</kbd></span></div>
+      <div><span>Placer la lecture au curseur</span><span><kbd>Ctrl</kbd> <kbd>Entrée</kbd></span></div>
+      <div><span>Démarrer ou mettre en pause</span><kbd>Espace</kbd></div>
+      <div><span>Revenir au début</span><kbd>R</kbd></div>
+      <div><span>Changer la taille du texte</span><span><kbd>+</kbd> <kbd>−</kbd></span></div>
+      <div><span>Changer de ligne dans le prompteur</span><span><kbd>↑</kbd> <kbd>↓</kbd></span></div>
+      <div><span>Basculer le prompteur en plein écran</span><kbd>F11</kbd></div>
+    </div>
+  </dialog>
+
+  <dialog id="delete-dialog" class="dialog compact-dialog" aria-labelledby="delete-title">
+    <div class="dialog-header">
+      <h2 id="delete-title">Supprimer ce script ?</h2>
+      <button class="icon-button" type="button" data-icon="close" data-close aria-label="Fermer"></button>
+    </div>
+    <p id="delete-name" class="delete-name"></p>
+    <div class="dialog-footer">
+      <button class="button secondary" type="button" data-close autofocus>Annuler</button>
+      <button id="delete-script" class="button destructive" type="button">Supprimer</button>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast" hidden>
+    <span id="toast-message" role="status"></span><button id="toast-action" type="button" hidden>Annuler</button>
+    <button id="toast-close" type="button" data-icon="close" aria-label="Fermer la notification"></button>
+  </div>
+</body>
+</html>
